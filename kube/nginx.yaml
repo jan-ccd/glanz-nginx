@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${BASE_NAME}
+  labels:
+    name: nginx
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+  selector:
+    name: ${BASE_NAME}-nginx
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ${ENVIRONMENT}-${BASE_NAME}-nginx
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      labels:
+        name: ${BASE_NAME}-nginx
+        tier: frontend
+        release: stable
+    spec:
+      containers:
+      - name: ${BASE_NAME}-nginx
+        image: ${NGINX_IMAGE}
+        env:
+        - name: TARGET_SERVICE
+          value: 'marketplace-website'
+        - name: ENABLE_BASIC_AUTH
+          value: 'false'
+        - name: ENABLE_SSL
+          value: 'false'
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 200m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 25Mi
