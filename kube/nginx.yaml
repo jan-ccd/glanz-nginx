@@ -18,8 +18,8 @@ kind: Deployment
 metadata:
   name: ${ENVIRONMENT}-${BASE_NAME}-nginx
 spec:
-  replicas: 2
-  revisionHistoryLimit: 3
+  replicas: 1
+  revisionHistoryLimit: 2
   template:
     metadata:
       labels:
